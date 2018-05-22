@@ -1,0 +1,19 @@
+{
+  "name": "pricefeed",
+  "version": "1.0.0",
+  "description": "Steem Price Feed in JS",
+  "author": "Jolly-Pirate",
+  "license": "GPL-3.0",
+  "main": "app.js",
+  "scripts": {
+    "preinstall": "sudo npm i -g forever",
+    "start": "forever --minUptime 1000 --spinSleepTime 10000 -m 10 app/app.js"
+  },
+  "repository": {
+    "private": true
+  },
+  "dependencies": {
+    "request": "*",
+    "steem": "*"
+  }
+}

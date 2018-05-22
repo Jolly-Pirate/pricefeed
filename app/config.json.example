@@ -1,0 +1,22 @@
+{
+  "witness": "YOURWITNESSNAME",
+  "privateActiveKey": "YOURACTIVEKEY",
+  "interval": 360,
+  "peg": false,
+  "peg_multi": 1,
+
+  "binance": true, 
+  "bittrex": true, 
+  "huobi": true, 
+  "poloniex": false,
+  "upbit": true,
+
+  "rpc": [
+    "https://api.steemit.com",
+    "https://direct.steemd.privex.io",
+    "https://steemd.minnowsupportproject.org",
+    "https://rpc.buildteam.io",
+    "https://rpc.steemviz.com",
+    "https://gtg.steem.house:8090/"
+  ]
+}

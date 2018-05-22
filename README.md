@@ -2,7 +2,7 @@
 A price feed application written in NodeJS for witnesses on the Steem network.
 
 ## Features
-- Application esilience with NodeJS restart on crash/exit.
+- Application resilience with NodeJS restart on crash/exit.
 - Automatic RPC switching.
 - Averaged price from up to 5 major cryptocurrency exchanges.
 

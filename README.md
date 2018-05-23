@@ -24,8 +24,9 @@ cp app/config.json.example app/config.json
 chmod 600 app/config.json
 ```
 
-Edit the app/config.json then start the app with
+Edit the app/config.json then install and start the app
 ```
+npm install
 npm start
 ```
 

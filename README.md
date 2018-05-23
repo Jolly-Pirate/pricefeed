@@ -69,7 +69,7 @@ The configuration is located in the file `app/config.json`.
 - privateActiveKey : private active key of the witness account
 - interval : delay between each feed publishing.
 - peg : set to true only if you want to adjust your price feed bias.
-- peg_multi : if "peg" is set to true, then this will change the "quote" to 1 / peg_multi. e.g. peg_multi of 2 it will show a 100% bias on the feed.
+- peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
 - rpc: Steem RPC nodes
 
 The different exchanges can be set to `true` or `false`. Poloniex is set to false by default because of their constant wallet problems.

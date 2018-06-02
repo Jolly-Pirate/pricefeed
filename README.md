@@ -74,3 +74,5 @@ The configuration is located in the file `app/config.json`.
 
 The different exchanges can be set to `true` or `false`. Poloniex is set to false by default because of their constant wallet problems.
 
+# Acknowledgment
+Some parts were based on someguy123's steemfeed-js and steem-in-a-box.

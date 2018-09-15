@@ -46,7 +46,7 @@ function switchrpc(counter) {
   if (config.rpc && counter !== maxrpc) {
     wait(5000);
 
-    steem.api.setOptions({url: config.rpc[counter]});
+    steem.api.setOptions({url: config.rpc[counter], useAppbaseApi: true});
     console.log(getDate(), "Switching to RPC", config.rpc[counter]);
 
     //process.stderr.write("\x07");// "\007" beep

@@ -7,8 +7,8 @@
 
   "binance": true, 
   "bittrex": true, 
-  "huobi": false, 
-  "poloniex": false,
+  "huobi": true, 
+  "poloniex": true,
   "upbit": true,
 
   "rpc": [

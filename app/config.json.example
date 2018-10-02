@@ -7,7 +7,7 @@
 
   "binance": true, 
   "bittrex": true, 
-  "huobi": true, 
+  "huobi": false, 
   "poloniex": false,
   "upbit": true,
 

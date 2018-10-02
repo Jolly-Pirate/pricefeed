@@ -67,10 +67,11 @@ help() {
     echo "Usage: $0 COMMAND"
     echo
     echo "Commands: "
-	echo "    install_docker - install docker"
+    echo "    install_docker - install docker"
     echo "    build - build container (from docker file)"
-	echo "    rebuild - rebuild container (from docker file)"
+    echo "    rebuild - rebuild container (from docker file)"
     echo "    start - starts container"
+    echo "    restart - restarts container"
     echo "    stop - stops container"
     echo "    logs - monitor the pricefeed logs"
     echo "    enter - enter a bash session in the container"
@@ -90,6 +91,11 @@ case $1 in
         ;;
     start)
         start
+        ;;
+    restart)
+        stop
+	sleep 5
+	start
         ;;
     stop)
         stop

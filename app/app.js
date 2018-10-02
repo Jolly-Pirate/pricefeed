@@ -55,6 +55,8 @@ getPrice = function (exchange, ticker_url) {
           resolve(parseFloat(json.result.Last));
         if (exchange === "huobi")
           resolve(parseFloat(json.tick.close));
+        if (exchange === "krakenUSDT")
+          resolve(parseFloat(json.result.USDTZUSD.c[0]));
         if (exchange === "poloniexSTEEM")
           resolve(json.BTC_STEEM.last);
         if (exchange === "poloniexBTC")
@@ -112,7 +114,7 @@ async function priceFeed() {
 
   var priceArray = [];
 
-  console.log(utils.getDate(), Yellow + "Fetching STEEM/USD prices" + Reset);
+  console.log(Yellow + "STEEM/USDT prices" + Reset);
 
   if (bittrexPrice > 0) {
     console.log(("Bittrex").padEnd(8), bittrexPrice.toFixed(3));
@@ -135,13 +137,22 @@ async function priceFeed() {
     priceArray.push(poloniexPrice);
   }
 
+  // USDT correction. Kraken ticker info https://www.kraken.com/help/api#get-ticker-info
+  var bittrexUsdUsdt = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usd-usdt");
+  var krakenUsdtUsd = await getPrice("krakenUSDT", "https://api.kraken.com/0/public/Ticker?pair=USDTUSD");
+  var averageUSDT = ((bittrexUsdUsdt + krakenUsdtUsd) / 2).toFixed(3);
+
   // calculate the average
   var total = 0;
   for (var i in priceArray) {
     total += priceArray[i];
   }
-  var averagePrice = (total / priceArray.length).toFixed(3);
-  console.log(Green + ("AVERAGE").padEnd(8), averagePrice, "(from", priceArray.length, "exchanges)" + Reset);
+  var averagePriceUSDT = (total / priceArray.length).toFixed(3);
+  var averagePrice = (averagePriceUSDT * averageUSDT).toFixed(3);
+
+  console.log(Yellow + "AVERAGE USDT/USD  ", averageUSDT + Reset);
+  console.log(Yellow + "AVERAGE STEEM/USDT", averagePriceUSDT, "(from", priceArray.length, "exchanges)" + Reset);
+  console.log(Green + "AVERAGE STEEM/USD ", averagePrice + Reset);
 
   var base = averagePrice + " SBD";
 
@@ -159,7 +170,7 @@ async function priceFeed() {
   steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
           .then(function (data) {
             if (data)
-              console.log(utils.getDate(), 'Published price feed STEEM/USD of $' + averagePrice);
+              console.log(Green + utils.getDate(), 'Published price feed STEEM/USD $' + averagePrice + Reset);
           })
           .catch(function (err) {
             console.log(utils.getDate(), Red, "Error in feedPublishAsync()", err, Reset);

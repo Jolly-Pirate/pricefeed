@@ -13,9 +13,8 @@
 
   "rpc": [
     "https://api.steemit.com",
-    "https://direct.steemd.privex.io",
     "https://steemd.minnowsupportproject.org",
-    "https://rpc.buildteam.io",
+    "https://steemd.privex.io",
     "https://rpc.steemviz.com",
     "https://gtg.steem.house:8090/"
   ]

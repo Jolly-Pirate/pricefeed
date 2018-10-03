@@ -72,7 +72,7 @@ The configuration is located in the file `app/config.json`.
 - peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
 - rpc: Steem RPC nodes
 
-The different exchanges can be set to `true` or `false`. Poloniex is set to false by default because of their constant wallet problems.
+The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the different exchanges and edit their setting accordingly.
 
 # Acknowledgment
 Some parts were based on someguy123's steemfeed-js and steem-in-a-box.

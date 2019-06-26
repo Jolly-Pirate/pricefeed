@@ -47,7 +47,7 @@ install_docker() {
 #The container name has to be after all of the arguments.
 
 start() {
-	[[ ! -z $(docker ps -a | grep $DOCKER_NAME) ]] && boldtext "Container already started"  ||  ( boldtext "Starting container..." && docker run -itd --restart always -h "pricefeed-container" -e TZ=$(cat /etc/timezone) -v $(pwd)/app:/home/pricefeed/app -u `stat -c "%u:%g" app` --name $DOCKER_NAME pricefeed)
+	[[ ! -z $(docker ps -a | grep $DOCKER_NAME) ]] && boldtext "Container already started"  ||  ( boldtext "Starting container..." && docker run -itd --restart always -h $DOCKER_NAME -e TZ=$(cat /etc/timezone) -v $(pwd)/app:/home/pricefeed/app -u `stat -c "%u:%g" app` --name $DOCKER_NAME pricefeed)
 }
 
 stop() {

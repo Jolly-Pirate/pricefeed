@@ -8,14 +8,14 @@
   "binance": true, 
   "bittrex": true, 
   "huobi": true, 
-  "poloniex": true,
-  "upbit": true,
+  "poloniex": false,
+  "upbit": false,
 
   "rpc": [
     "https://api.steemit.com",
     "https://steemd.minnowsupportproject.org",
+    "https://anyx.io",
     "https://steemd.privex.io",
-    "https://rpc.steemviz.com",
     "https://gtg.steem.house:8090/"
   ]
 }

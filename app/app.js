@@ -9,6 +9,7 @@ const
         utils = require('./utils.js');
 
 var counter = 0;
+utils.switchrpc(counter);
 
 checkAccount = function () {
   return new Promise((resolve, reject) => {

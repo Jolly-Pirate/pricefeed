@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "main": "app.js",
   "scripts": {
-    "preinstall": "sudo npm i -g forever",
+    "preinstall": "sudo npm i -g forever ; sudo apt install -y jq",
     "start": "forever --minUptime 1000 --spinSleepTime 10000 -m 10 app/app.js"
   },
   "repository": {

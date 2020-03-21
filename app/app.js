@@ -1,12 +1,18 @@
 const
-        Reset = "\x1b[0m",
-        Red = "\x1b[31m",
-        Green = "\x1b[32m",
-        Yellow = "\x1b[33m",
-        request = require('request'),
-        steem = require('steem'),
-        config = require('./config.json'),
-        utils = require('./utils.js');
+  Reset = "\x1b[0m",
+  Red = "\x1b[31m",
+  Green = "\x1b[32m",
+  Yellow = "\x1b[33m",
+  request = require('request'),
+  steem = require('steem'),
+  config = require('./config.json'),
+  utils = require('./utils.js');
+
+if (config.steemchain && config.hivechain) {
+  console.log('Enable only one blockchain in the app/config.json file, hivechain or steemchain, then restart');
+  console.log('Exiting');
+  process.exit();
+}
 
 var counter = 0;
 utils.switchrpc(counter);
@@ -14,33 +20,33 @@ utils.switchrpc(counter);
 checkAccount = function () {
   return new Promise((resolve, reject) => {
     steem.api.getAccountsAsync([config.witness])
-            .then(function (result) {
-              if (result[0]) {
-                var publicKeyFromBlockchain = result[0].active.key_auths[0][0];
-                if (!utils.checkPrivateKey(config.privateActiveKey, publicKeyFromBlockchain)) {
-                  console.log(Yellow + "Must use a valid Active Key. Exiting." + Reset);
-                  process.exit();
-                } else {
-                  console.log(utils.getDate(), "Witness", Green + config.witness + Reset, "successfully checked out.");
-                  resolve(true);
-                }
-              } else {
-                console.log(utils.getDate(), Yellow + "Witness doesn't exit. Exiting." + Reset);
-                process.exit();
-              }
-            })
-            .catch(function (err) {
-              console.log(utils.getDate(), Red, "Error in getAccountsAsync()", err, Reset);
-              if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) { // particular to api.steemit.com
-                utils.wait(5000);
-                counter = 0;
-                checkAccount();
-              } else {
-                utils.switchrpc(counter);
-                counter++;
-                checkAccount();
-              }
-            });
+      .then(function (result) {
+        if (result[0]) {
+          var publicKeyFromBlockchain = result[0].active.key_auths[0][0];
+          if (!utils.checkPrivateKey(config.privateActiveKey, publicKeyFromBlockchain)) {
+            console.log(Yellow + "Must use a valid Active Key. Exiting." + Reset);
+            process.exit();
+          } else {
+            console.log(utils.getDate(), "Witness", Green + config.witness + Reset, "successfully checked out.");
+            resolve(true);
+          }
+        } else {
+          console.log(utils.getDate(), Yellow + "Witness doesn't exit. Exiting." + Reset);
+          process.exit();
+        }
+      })
+      .catch(function (err) {
+        console.log(utils.getDate(), Red, "Error in getAccountsAsync()", err, Reset);
+        if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) { // particular to api.steemit.com
+          utils.wait(5000);
+          counter = 0;
+          checkAccount();
+        } else {
+          utils.switchrpc(counter);
+          counter++;
+          checkAccount();
+        }
+      });
   });
 };
 
@@ -61,9 +67,11 @@ getPrice = function (exchange, ticker_url) {
         if (exchange === "poloniexSTEEM")
           resolve(json.BTC_STEEM.last);
         if (exchange === "poloniexBTC")
-          resolve(json.USDT_BTC.last);
+          resolve(parseFloat(json.USDT_BTC.last));
         if (exchange === "upbit")
           resolve(json[0].tradePrice);
+        if (exchange === "ionomy")
+          resolve(parseFloat(json.data.price));
       }
       if (error) {
         console.log(Red, error, Reset);
@@ -88,34 +96,61 @@ async function priceFeed() {
 //  var cmcSteem = await getPrice("https://api.coinmarketcap.com/v1/ticker/steem/?convert=USD");
 //  var cmcPrice = parseFloat(cmcSteem[0].price_usd).toFixed(3);
 
-  if (config.binance) {
-    var binanceSteemBtc = await getPrice("binance", "https://api.binance.com/api/v3/ticker/price?symbol=STEEMBTC");
-    var binanceBtcUsdt = await getPrice("binance", "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
-    var binancePrice = binanceSteemBtc * binanceBtcUsdt;
+  var token;
+
+  // select blockchain from config
+  if (config.hivechain) {
+    token = 'HIVE';
+    if (config.bittrex) {
+      var bittrexUsdtBtc = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc");
+      var bittrexBtcHive = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=btc-hive");
+      var bittrexPrice = bittrexUsdtBtc * bittrexBtcHive;
+    }
+    if (config.ionomy) {
+      // Ionomy doesn't have a USDT/BTC pair, so using the average from exchanges
+      var binanceBtcUsdt = await getPrice("binance", "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+      var bittrexUsdtBtc = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc");
+      var poloniexUsdtBtc = await getPrice("poloniexBTC", "https://poloniex.com/public?command=returnTicker");
+      var upbitUsdtBtc = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.USDT-BTC");
+
+      var averageUsdtBtc = (binanceBtcUsdt + bittrexUsdtBtc + poloniexUsdtBtc + upbitUsdtBtc) / 4;
+
+      var ionomyBtcHive = await getPrice("ionomy", "https://ionomy.com/api/v1/public/market-summary?market=btc-hive");
+      var ionomyPrice = averageUsdtBtc * ionomyBtcHive;
+    }
   }
-  if (config.bittrex) {
-    var bittrexUsdtBtc = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc");
-    var bittrexBtcSteem = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=btc-steem");
-    var bittrexPrice = bittrexUsdtBtc * bittrexBtcSteem;
-  }
-  if (config.huobi) {
-    var huobiSteemUsdt = await getPrice("huobi", "https://api.huobi.pro/market/detail/merged?symbol=steemusdt");
-    var huobiPrice = huobiSteemUsdt;
-  }
-  if (config.poloniex) {
-    var poloniexUsdtBtc = await getPrice("poloniexSTEEM", "https://poloniex.com/public?command=returnTicker");
-    var poloniexBtcSteem = await getPrice("poloniexBTC", "https://poloniex.com/public?command=returnTicker");
-    var poloniexPrice = poloniexUsdtBtc * poloniexBtcSteem;
-  }
-  if (config.upbit) {
-    var upbitUsdtBtc = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.USDT-BTC");
-    var upbitBtcSteem = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.BTC-STEEM");
-    var upbitPrice = upbitUsdtBtc * upbitBtcSteem;
+
+  if (config.steemchain) {
+    token = 'STEEM';
+    if (config.binance) {
+      var binanceSteemBtc = await getPrice("binance", "https://api.binance.com/api/v3/ticker/price?symbol=STEEMBTC");
+      var binanceBtcUsdt = await getPrice("binance", "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+      var binancePrice = binanceSteemBtc * binanceBtcUsdt;
+    }
+    if (config.bittrex) {
+      var bittrexUsdtBtc = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc");
+      var bittrexBtcSteem = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=btc-steem");
+      var bittrexPrice = bittrexUsdtBtc * bittrexBtcSteem;
+    }
+    if (config.huobi) {
+      var huobiSteemUsdt = await getPrice("huobi", "https://api.huobi.pro/market/detail/merged?symbol=steemusdt");
+      var huobiPrice = huobiSteemUsdt;
+    }
+    if (config.poloniex) {
+      var poloniexUsdtBtc = await getPrice("poloniexBTC", "https://poloniex.com/public?command=returnTicker");
+      var poloniexBtcSteem = await getPrice("poloniexSTEEM", "https://poloniex.com/public?command=returnTicker");
+      var poloniexPrice = poloniexUsdtBtc * poloniexBtcSteem;
+    }
+    if (config.upbit) {
+      var upbitUsdtBtc = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.USDT-BTC");
+      var upbitBtcSteem = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.BTC-STEEM");
+      var upbitPrice = upbitUsdtBtc * upbitBtcSteem;
+    }
   }
 
   var priceArray = [];
 
-  console.log(Yellow + "STEEM/USDT prices" + Reset);
+  console.log(Yellow + token + "/USDT prices" + Reset);
 
   if (bittrexPrice > 0) {
     console.log(("Bittrex").padEnd(8), bittrexPrice.toFixed(3));
@@ -137,6 +172,10 @@ async function priceFeed() {
     console.log(("Poloniex").padEnd(8), poloniexPrice.toFixed(3));
     priceArray.push(poloniexPrice);
   }
+  if (ionomyPrice > 0) {
+    console.log(("Ionomy").padEnd(8), ionomyPrice.toFixed(3));
+    priceArray.push(ionomyPrice);
+  }
 
   // USDT correction. Kraken ticker info https://www.kraken.com/help/api#get-ticker-info
   var bittrexUsdUsdt = await getPrice("bittrex", "https://bittrex.com/api/v1.1/public/getticker?market=usd-usdt");
@@ -152,8 +191,8 @@ async function priceFeed() {
   var averagePrice = (averagePriceUSDT * averageUSDT).toFixed(3);
 
   console.log(Yellow + "AVERAGE USDT/USD  ", averageUSDT + Reset);
-  console.log(Yellow + "AVERAGE STEEM/USDT", averagePriceUSDT, "(from", priceArray.length, "exchanges)" + Reset);
-  console.log(Green + "AVERAGE STEEM/USD ", averagePrice + Reset);
+  console.log(Yellow + "AVERAGE " + token + "/USDT", averagePriceUSDT, "(from", priceArray.length, "exchanges)" + Reset);
+  console.log(Green + "AVERAGE " + token + "/USD ", averagePrice + Reset);
 
   var base = averagePrice + " SBD";
 
@@ -168,22 +207,28 @@ async function priceFeed() {
 
   exchangeRate = {base: base, quote: quote + " STEEM"};
 
-  steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
-          .then(function (data) {
-            if (data)
-              console.log(Green + utils.getDate(), 'Published price feed STEEM/USD $' + averagePrice + Reset);
-          })
-          .catch(function (err) {
-            console.log(utils.getDate(), Red, "Error in feedPublishAsync()", err, Reset);
-            if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) { // particular to api.steemit.com
-              utils.wait(5000);
-              counter = 0;
-              priceFeed();
-            } else {
-              utils.switchrpc(counter);
-              counter++;
-              priceFeed();
-            }
-          });
+
+  if (config.testmode) {
+    console.log(Green + utils.getDate(), 'Price feed ' + token + '/USD $' + averagePrice + Reset);
+    console.log(Red + 'TEST MODE ON, NOTHING IS BROADCAST' + Reset);
+  } else {
+    steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
+      .then(function (data) {
+        if (data)
+          console.log(Green + utils.getDate(), 'Published price feed ' + token + '/USD $' + averagePrice + Reset);
+      })
+      .catch(function (err) {
+        console.log(utils.getDate(), Red, "Error in feedPublishAsync()", err, Reset);
+        if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) { // particular to api.steemit.com
+          utils.wait(5000);
+          counter = 0;
+          priceFeed();
+        } else {
+          utils.switchrpc(counter);
+          counter++;
+          priceFeed();
+        }
+      });
+  }
 
 }

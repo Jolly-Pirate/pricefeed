@@ -5,11 +5,17 @@
   "peg": false,
   "peg_multi": 1,
 
-  "binance": true, 
-  "bittrex": true, 
-  "huobi": true, 
-  "poloniex": false,
-  "upbit": false,
+  "testmode": true,
+
+  "hivechain": true,
+  "steemchain": false,
+
+  "binance": true,
+  "bittrex": true,
+  "huobi": true,
+  "ionomy": true,
+  "poloniex": true,
+  "upbit": true,
 
   "rpc": [
     "https://api.hivekings.com",

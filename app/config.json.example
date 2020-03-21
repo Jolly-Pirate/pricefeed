@@ -5,7 +5,7 @@
   "peg": false,
   "peg_multi": 1,
 
-  "testmode": true,
+  "testmode": false,
 
   "hivechain": true,
   "steemchain": false,

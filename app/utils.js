@@ -1,6 +1,6 @@
 const
-        steem = require('steem'),
-        config = require('./config.json');
+  steem = require('steem'),
+  config = require('./config.json');
 
 var getAccountInfo = function (account) {
   return new Promise((resolve, reject) => {

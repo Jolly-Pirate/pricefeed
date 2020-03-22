@@ -45,6 +45,7 @@ If you want to terminate the script press `CTRL-c`, then type `exit` to close th
 
 # Docker install (recommended)
 ```
+sudo apt install -y jq
 git clone https://github.com/Jolly-Pirate/pricefeed.git
 cd pricefeed
 chmod +x run.sh

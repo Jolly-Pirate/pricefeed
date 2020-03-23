@@ -72,6 +72,8 @@ getPrice = function (exchange, ticker_url) {
           resolve(json[0].tradePrice);
         if (exchange === "ionomy")
           resolve(parseFloat(json.data.price));
+        if (exchange === "probit")
+          resolve(parseFloat(json.data[0].last));
       }
       if (error) {
         console.log(Red, error, Reset);
@@ -118,6 +120,10 @@ async function priceFeed() {
       var ionomyBtcHive = await getPrice("ionomy", "https://ionomy.com/api/v1/public/market-summary?market=btc-hive");
       var ionomyPrice = averageUsdtBtc * ionomyBtcHive;
     }
+    if (config.probit) { // https://docs-en.probit.com/docs/getting-started
+      var probitUsdtHive = await getPrice("probit", "https://api.probit.com/api/exchange/v1/ticker?market_ids=HIVE-USDT");
+      var probitPrice = probitUsdtHive;
+    }
   }
 
   if (config.steemchain) {
@@ -145,6 +151,10 @@ async function priceFeed() {
       var upbitUsdtBtc = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.USDT-BTC");
       var upbitBtcSteem = await getPrice("upbit", "https://crix-api.upbit.com/v1/crix/trades/ticks?code=CRIX.UPBIT.BTC-STEEM");
       var upbitPrice = upbitUsdtBtc * upbitBtcSteem;
+    }
+    if (config.probit) {
+      var probitUsdtSteem = await getPrice("probit", "https://api.probit.com/api/exchange/v1/ticker?market_ids=STEEM-USDT");
+      var probitPrice = probitUsdtSteem;
     }
   }
 
@@ -175,6 +185,10 @@ async function priceFeed() {
   if (ionomyPrice > 0) {
     console.log(("Ionomy").padEnd(8), ionomyPrice.toFixed(3));
     priceArray.push(ionomyPrice);
+  }
+  if (probitPrice > 0) {
+    console.log(("Probit").padEnd(8), probitPrice.toFixed(3));
+    priceArray.push(probitPrice);
   }
 
   // USDT correction. Kraken ticker info https://www.kraken.com/help/api#get-ticker-info

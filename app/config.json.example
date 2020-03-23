@@ -15,6 +15,7 @@
   "huobi": true,
   "ionomy": true,
   "poloniex": true,
+  "probit": true,
   "upbit": true,
 
   "rpc": [

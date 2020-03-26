@@ -25,7 +25,10 @@ cd pricefeed
 chmod +x run.sh
 ./run.sh install_docker
 ./run.sh build
+cp app/config.json.example app/config.json
+chmod 600 app/config.json
 ```
+
 Edit the file `app/config.json` accordingly (see the Configuration section below), then start the container with
 ```
 ./run.sh start

@@ -79,9 +79,10 @@ The configuration is located in the file `app/config.json`.
 - peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
 - testmode : when set to true, the script won't broadcast the price feed to the blockchain, good for testing or checking the price on the different exchanges
 - hivechain/steemchain : select which blockchain to broadcast to, by setting only one of those options to `true`
-- rpc: array of the Hive OR Steem RPC nodes (be careful not to mix RPC's from both blockchains)
+- hiverpc: array of Hive RPC nodes (be careful not to mix RPC's from both blockchains)
+- steemrpc: array of Steem RPC nodes (be careful not to mix RPC's from both blockchains)
 
-The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the exchange prices and edit their setting accordingly.
+The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the exchange prices/volumes and edit their setting accordingly, then restart the price feed.
 
 # Acknowledgment
 Some parts were based on someguy123's steemfeed-js and steem-in-a-box.

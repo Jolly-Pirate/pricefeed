@@ -92,11 +92,6 @@ async function priceFeed() {
     if (config.probit) {
       var probitUsdtToken = await utils.getPrice("probit", "HIVE-USDT");
       var probitPrice = probitUsdtToken.price;
-    }
-
-    if (config.probit) {
-      var probitUsdtToken = await utils.getPrice("probit", "HIVE-USDT");
-      var probitPrice = probitUsdtToken.price;
       var probitVolume = probitUsdtToken.volume;
     }
 
@@ -121,23 +116,6 @@ async function priceFeed() {
       var huobiPrice = huobiTokenUsdt.price;
       var huobiVolume = huobiTokenUsdt.volume;
     }
-    if (config.poloniex) {
-      var poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
-      var poloniexBtcToken = await utils.getPrice("poloniex", "BTC_STEEM");
-      var poloniexPrice = poloniexUsdtBtc.price * poloniexBtcToken.price;
-      var poloniexVolume = poloniexBtcToken.volume;
-    }
-    if (config.upbit) {
-      var upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
-      var upbitBtcToken = await utils.getPrice("upbit", "BTC-STEEM");
-      var upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
-      var upbitVolume = upbitBtcToken.volume;
-    }
-    if (config.probit) {
-      var probitUsdtToken = await utils.getPrice("probit", "STEEM-USDT");
-      var probitPrice = probitUsdtToken.price;
-      var probitVolume = probitUsdtToken.volume;
-    }
     if (config.ionomy) {
       // Ionomy doesn't have a USDT/BTC pair, so using the average from exchanges
       var binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
@@ -149,6 +127,23 @@ async function priceFeed() {
       var ionomyPrice = averageUsdtBtc * ionomyBtcToken.price;
       var ionomyVolume = ionomyBtcToken.volume;
     }
+    if (config.poloniex) {
+      var poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
+      var poloniexBtcToken = await utils.getPrice("poloniex", "BTC_STEEM");
+      var poloniexPrice = poloniexUsdtBtc.price * poloniexBtcToken.price;
+      var poloniexVolume = poloniexBtcToken.volume;
+    }
+    if (config.probit) {
+      var probitUsdtToken = await utils.getPrice("probit", "STEEM-USDT");
+      var probitPrice = probitUsdtToken.price;
+      var probitVolume = probitUsdtToken.volume;
+    }
+    if (config.upbit) {
+      var upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
+      var upbitBtcToken = await utils.getPrice("upbit", "BTC-STEEM");
+      var upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
+      var upbitVolume = upbitBtcToken.volume;
+    }
 
   }
 
@@ -158,37 +153,37 @@ async function priceFeed() {
   console.log(Blue + Underscore + token + "/USDT prices and volumes" + Reset);
 
   if (binancePrice > 0) {
-    console.log(("Binance").padEnd(8), "$" + binancePrice.toFixed(3), binanceVolume.toFixed(3).padStart(12));
+    console.log(("Binance").padEnd(8), "$" + binancePrice.toFixed(3), Math.floor(binanceVolume).toLocaleString().padStart(10));
     priceArray.push(binancePrice);
     volumeArray.push(binanceVolume);
   }
   if (bittrexPrice > 0) {
-    console.log(("Bittrex").padEnd(8), "$" + bittrexPrice.toFixed(3), bittrexVolume.toFixed(3).padStart(12));
+    console.log(("Bittrex").padEnd(8), "$" + bittrexPrice.toFixed(3), Math.floor(bittrexVolume).toLocaleString().padStart(10));
     priceArray.push(bittrexPrice);
     volumeArray.push(bittrexVolume);
   }
   if (huobiPrice > 0) {
-    console.log(("Huobi").padEnd(8), "$" + huobiPrice.toFixed(3), huobiVolume.toFixed(3).padStart(12));
+    console.log(("Huobi").padEnd(8), "$" + huobiPrice.toFixed(3), Math.floor(huobiVolume).toLocaleString().padStart(10));
     priceArray.push(huobiPrice);
     volumeArray.push(huobiVolume);
   }
   if (ionomyPrice > 0) {
-    console.log(("Ionomy").padEnd(8), "$" + ionomyPrice.toFixed(3), ionomyVolume.toFixed(3).padStart(12));
+    console.log(("Ionomy").padEnd(8), "$" + ionomyPrice.toFixed(3), Math.floor(ionomyVolume).toLocaleString().padStart(10));
     priceArray.push(ionomyPrice);
     volumeArray.push(ionomyVolume);
   }
   if (poloniexPrice > 0) {
-    console.log(("Poloniex").padEnd(8), "$" + poloniexPrice.toFixed(3), poloniexVolume.toFixed(3).padStart(12));
+    console.log(("Poloniex").padEnd(8), "$" + poloniexPrice.toFixed(3), Math.floor(poloniexVolume).toLocaleString().padStart(10));
     priceArray.push(poloniexPrice);
     volumeArray.push(poloniexVolume);
   }
   if (probitPrice > 0) {
-    console.log(("Probit").padEnd(8), "$" + probitPrice.toFixed(3), probitVolume.toFixed(3).padStart(12));
+    console.log(("Probit").padEnd(8), "$" + probitPrice.toFixed(3), Math.floor(probitVolume).toLocaleString().padStart(10));
     priceArray.push(probitPrice);
     volumeArray.push(probitVolume);
   }
   if (upbitPrice > 0) {
-    console.log(("UpBit").padEnd(8), "$" + upbitPrice.toFixed(3), upbitVolume.toFixed(3).padStart(12));
+    console.log(("UpBit").padEnd(8), "$" + upbitPrice.toFixed(3), Math.floor(upbitVolume).toLocaleString().padStart(10));
     priceArray.push(upbitPrice);
     volumeArray.push(upbitVolume);
   }
@@ -196,7 +191,7 @@ async function priceFeed() {
   // Volume Weighted Average Price (VWAP)
   // VWAP= ∑(Price * Volume) / ∑Volume
 
-  // USDT correction.
+  // USDT correction
   var bittrexUsdUsdt = await utils.getPrice("bittrex", "usd-usdt");
   var krakenUsdtUsd = await utils.getPrice("kraken", "USDTUSD");
 
@@ -213,19 +208,18 @@ async function priceFeed() {
     totalVolume += volumeArray[i];
   }
 
-  // VWAP
-  var VWAP = (totalPricexVolume / totalVolume).toFixed(3);
-  var adjustedVWAP = (VWAP * VWAPTUsdt).toFixed(3);
-
   // average
   var averagePriceUsdt = (total / priceArray.length).toFixed(3);
   var adjustedAverage = (averagePriceUsdt * averageUsdt).toFixed(3);
-
 
   console.log(Blue + Underscore + "Average Price", "(from", priceArray.length, "exchanges)" + Reset);
   console.log(Yellow + "USDT/USD  ", averageUsdt + Reset);
   console.log(Yellow + token + "/USDT", averagePriceUsdt + Reset);
   console.log(Green + token + "/USD ", adjustedAverage + Reset);
+
+  // VWAP
+  var VWAP = (totalPricexVolume / totalVolume).toFixed(3);
+  var adjustedVWAP = (VWAP * VWAPTUsdt).toFixed(3);
 
   console.log(Blue + Underscore + "Volume Weighted Average Price (VWAP)", "(from", priceArray.length, "exchanges)" + Reset);
   console.log(Yellow + "USDT/USD  ", VWAPTUsdt + Reset);
@@ -244,7 +238,6 @@ async function priceFeed() {
   }
 
   exchangeRate = {base: base, quote: quote + " STEEM"};
-
 
   if (config.testmode) {
     console.log(Green + utils.getDate(), 'Price feed ' + token + '/USD $' + adjustedVWAP + Reset);

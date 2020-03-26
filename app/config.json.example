@@ -5,7 +5,7 @@
   "peg": false,
   "peg_multi": 1,
 
-  "testmode": false,
+  "testmode": true,
 
   "hivechain": true,
   "steemchain": false,
@@ -18,10 +18,14 @@
   "probit": true,
   "upbit": true,
 
-  "rpc": [
+  "hiverpc": [
+    "https://anyx.io",
     "https://api.hivekings.com",
     "https://api.hive.blog",
-    "https://api.openhive.network",
-    "https://anyx.io"
+    "https://api.openhive.network"
+  ],
+
+  "steemrpc": [
+    "https://api.steemit.com"
   ]
 }

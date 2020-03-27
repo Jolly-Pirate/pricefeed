@@ -162,12 +162,10 @@ async function priceFeed() {
   if (binancePrice > 0) {
     console.log(("Binance").padEnd(8), "$" + binancePrice.toFixed(3), Math.floor(binanceVolume).toLocaleString().padStart(10));
     priceArray.push([binancePrice, binanceVolume]);
-
   }
   if (bittrexPrice > 0) {
     console.log(("Bittrex").padEnd(8), "$" + bittrexPrice.toFixed(3), Math.floor(bittrexVolume).toLocaleString().padStart(10));
     priceArray.push([bittrexPrice, bittrexVolume]);
-
   }
   if (huobiPrice > 0) {
     console.log(("Huobi").padEnd(8), "$" + huobiPrice.toFixed(3), Math.floor(huobiVolume).toLocaleString().padStart(10));
@@ -220,10 +218,6 @@ async function priceFeed() {
     VWAPTUsdt = (totalPricexVolume / totalVolume).toFixed(3);
   }
 
-  // USDT correction previous code
-  //  var averageUsdt = ((bittrexUsdUsdt.price + krakenUsdtUsd.price) / 2).toFixed(3);
-  //  var VWAPTUsdt = ((bittrexUsdUsdt.price * bittrexUsdUsdt.volume + krakenUsdtUsd.price * krakenUsdtUsd.volume) / (bittrexUsdUsdt.volume + krakenUsdtUsd.volume)).toFixed(3);
-
   // reset the totals
   total = 0;
   totalPricexVolume = 0;
@@ -274,9 +268,9 @@ async function priceFeed() {
   if (Number(adjustedVWAP) === 0)
     console.log(Red + "PROBLEM WITH VWAP" + Reset);
 
-  if (config.testmode) {
+  if (config.testmode)
     console.log(Red + "TEST MODE ON, NOTHING IS BROADCAST" + Reset);
-  }
+
   if (!config.testmode && Number(adjustedVWAP) > 0) {
     steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
       .then(function (data) {

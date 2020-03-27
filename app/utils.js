@@ -1,7 +1,15 @@
 const
-  request = require('request'),
-  steem = require('steem'),
-  config = require('./config.json');
+  request = require("request"),
+  steem = require("steem"),
+  config = require("./config.json");
+
+const
+  Reset = "\x1b[0m",
+  Blue = "\x1b[34m",
+  Green = "\x1b[32m",
+  Red = "\x1b[31m",
+  Yellow = "\x1b[33m",
+  Underscore = "\x1b[4m";
 
 var getAccountInfo = function (account) {
   return new Promise((resolve, reject) => {
@@ -67,31 +75,17 @@ function getPrice(exchange, pair) {
   return new Promise((resolve, reject) => {
     var url;
     switch (exchange) {
-      case "bittrex":
-        // https://bittrex.github.io/api/v1-1
-        url = "https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair;
-        break;
       case "binance":
         // https://binance-docs.github.io/apidocs/spot/en/
         url = "https://api.binance.com/api/v3/ticker/24hr?symbol=" + pair;
         break;
+      case "bittrex":
+        // https://bittrex.github.io/api/v1-1
+        url = "https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair;
+        break;
       case "huobi":
         // https://huobiapi.github.io/docs/dm/v1/en/
         url = "https://api.huobi.pro/market/detail/merged?symbol=" + pair;
-        break;
-      case "poloniex":
-        // https://docs.poloniex.com
-        url = "https://poloniex.com/public?command=returnTicker";
-        break;
-      case "upbit":
-        // https://docs.upbit.com/v1.0.7/reference
-        // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-STEEM
-        url = "https://api.upbit.com/v1/ticker?markets=" + pair;
-        break;
-      case "probit":
-        // https://docs-en.probit.com/docs/getting-started
-        // https://www.probit.com/app/exchange/STEEM-USDT
-        url = "https://api.probit.com/api/exchange/v1/ticker?market_ids=" + pair;
         break;
       case "ionomy":
         // https://ionomyexchangeapi.docs.apiary.io/#reference/public
@@ -101,43 +95,58 @@ function getPrice(exchange, pair) {
         // https://www.kraken.com/help/api#get-ticker-info
         url = "https://api.kraken.com/0/public/Ticker?pair=" + pair;
         break;
+      case "poloniex":
+        // https://docs.poloniex.com
+        url = "https://poloniex.com/public?command=returnTicker";
+        break;
+      case "probit":
+        // https://docs-en.probit.com/docs/getting-started
+        // https://www.probit.com/app/exchange/STEEM-USDT
+        url = "https://api.probit.com/api/exchange/v1/ticker?market_ids=" + pair;
+        break;
+      case "upbit":
+        // https://docs.upbit.com/v1.0.7/reference
+        // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-STEEM
+        url = "https://api.upbit.com/v1/ticker?markets=" + pair;
+        break;
       default:
-      // code block
     }
     request(url, function (error, response, body) {
-      //console.log(response);
-      if (body) {
-        var json = JSON.parse(body);
+      if (body && body.includes(pair)) {
+        var json = JSON.parse(body); // convert body to json
         if (exchange === "binance")
           resolve({price: parseFloat(json.lastPrice), volume: parseFloat(json.volume)});
         if (exchange === "bittrex")
           resolve({price: parseFloat(json.result[0].Last), volume: parseFloat(json.result[0].Volume)});
         if (exchange === "huobi")
           resolve({price: parseFloat(json.tick.close), volume: parseFloat(json.tick.vol)});
+        if (exchange === "ionomy")
+          resolve({price: parseFloat(json.data.price), volume: parseFloat(json.data.volume)});
         if (exchange === "kraken")
           resolve({price: parseFloat(json.result.USDTZUSD.c[0]), volume: parseFloat(json.result.USDTZUSD.v[0])});
         if (exchange === "poloniex")
           resolve({price: parseFloat(json[pair].last), volume: parseFloat(json[pair].quoteVolume)}); // using variable in json selector
-        if (exchange === "upbit")
-          resolve({price: json[0].trade_price, volume: json[0].acc_trade_volume_24h});
-        if (exchange === "ionomy")
-          resolve({price: parseFloat(json.data.price), volume: parseFloat(json.data.volume)});
         if (exchange === "probit")
           resolve({price: parseFloat(json.data[0].last), volume: parseFloat(json.data[0].base_volume)});
+        if (exchange === "upbit")
+          resolve({price: json[0].trade_price, volume: json[0].acc_trade_volume_24h});
+      } else {
+        console.log(Red, "Error fetching", pair, "from", exchange, Reset);
+        resolve({price: 0, volume: 0});
       }
       if (error) {
         console.log(error);
-        resolve(0); // set the price to 0 then take care of not calculating it in the price average
+        resolve({price: 0, volume: 0}); // set the price/volume to 0 and exclude it in the price calculation
       }
     });
   });
 }
 
 module.exports = {
-  getAccountInfo,
   checkPrivateKey,
+  getAccountInfo,
   getDate,
-  wait,
+  getPrice,
   switchrpc,
-  getPrice
+  wait
 };

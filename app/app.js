@@ -41,7 +41,7 @@ function checkAccount() {
       .catch(function (err) {
         console.log(utils.getDate(), Red, "Error in getAccountsAsync()", err, Reset);
         if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) { // particular to api.steemit.com
-          utils.wait(5000);
+          utils.wait(2000);
           counter = 0;
           checkAccount();
         } else {

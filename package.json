@@ -7,6 +7,7 @@
   "main": "app.js",
   "scripts": {
     "preinstall": "sudo npm i -g forever",
+    "pretest": "eslint --ignore-path .gitignore .",
     "start": "forever --minUptime 1000 --spinSleepTime 10000 -m 10 app/app.js"
   },
   "repository": {

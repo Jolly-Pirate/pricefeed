@@ -104,6 +104,11 @@ async function priceFeed() {
       probitPrice = probitUsdtToken.price;
       probitVolume = probitUsdtToken.volume;
     }
+    if (config.huobi) {
+      huobiTokenUsdt = await utils.getPrice("huobi", "hiveusdt");
+      huobiPrice = huobiTokenUsdt.price;
+      huobiVolume = huobiTokenUsdt.volume;
+    }
   }
 
   if (config.steemchain) {
@@ -121,7 +126,7 @@ async function priceFeed() {
       bittrexVolume = bittrexBtcToken.volume;
     }
     if (config.huobi) {
-      huobiTokenUsdt = await utils.getPrice("huobi", "steemusdt");
+      huobiTokenUsdt = await utils.getPrice("huobi", "hiveusdt");
       huobiPrice = huobiTokenUsdt.price;
       huobiVolume = huobiTokenUsdt.volume;
     }

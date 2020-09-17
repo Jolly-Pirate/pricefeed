@@ -1,5 +1,5 @@
-# HIVE/STEEM Price Feed
-A price feed application written in NodeJS for witnesses on the Hive or Steem network.
+# HIVE Price Feed
+A price feed application written in NodeJS for witnesses on the Hive network.
 
 ## Features
 - Application resilience with NodeJS restart on crash/exit.
@@ -12,7 +12,7 @@ Requires NodeJS >7.6 (for the async functions).
 ```
 sudo apt update
 sudo apt install -y curl software-properties-common gnupg build-essential libssl-dev
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt install -y nodejs
 sudo npm i npm@latest -g
 ```
@@ -53,6 +53,7 @@ chmod 600 app/config.json
 Edit the file `app/config.json` accordingly (see the Configuration section below), then start the app with
 ```
 npm install
+npm audit fix
 npm start
 ```
 
@@ -78,9 +79,8 @@ The configuration is located in the file `app/config.json`.
 - peg : set to true only if you want to adjust your price feed bias.
 - peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
 - testmode : when set to true, the script won't broadcast the price feed to the blockchain, good for testing or checking the price on the different exchanges
-- hivechain/steemchain : select which blockchain to broadcast to, by setting only one of those options to `true`
-- hiverpc: array of Hive RPC nodes (be careful not to mix RPC's from both blockchains)
-- steemrpc: array of Steem RPC nodes (be careful not to mix RPC's from both blockchains)
+- hivechain : select which blockchain to broadcast to, by setting only one of those options to `true`
+- hiverpc: array of Hive RPC nodes
 
 The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the exchange prices/volumes and edit their setting accordingly, then restart the price feed.
 

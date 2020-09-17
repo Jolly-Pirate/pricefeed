@@ -54,10 +54,7 @@ function wait(ms) {
 
 function switchrpc(counter) {
   var rpc = [];
-  if (config.hivechain)
-    rpc = config.hiverpc;
-  if (config.steemchain)
-    rpc = config.steemrpc;
+  rpc = config.hiverpc;
 
   var maxrpc = rpc.length;
 
@@ -104,12 +101,12 @@ function getPrice(exchange, pair) {
         break;
       case "probit":
         // https://docs-en.probit.com/docs/getting-started
-        // https://www.probit.com/app/exchange/STEEM-USDT
+        // https://www.probit.com/app/exchange/HIVE-USDT
         url = "https://api.probit.com/api/exchange/v1/ticker?market_ids=" + pair;
         break;
       case "upbit":
         // https://docs.upbit.com/v1.0.7/reference
-        // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-STEEM
+        // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-HIVE
         url = "https://api.upbit.com/v1/ticker?markets=" + pair;
         break;
       default:

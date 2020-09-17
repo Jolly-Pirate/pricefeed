@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:12
 
 RUN apt-get update && apt-get -y install sudo
 RUN npm i npm@latest -g 
@@ -11,6 +11,6 @@ USER pricefeed
 WORKDIR /home/pricefeed
 
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm audit fix
 #COPY . .
 CMD forever --minUptime 1000 --spinSleepTime 10000 -m 10 app/app.js

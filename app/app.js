@@ -1,7 +1,10 @@
 const
-  steem = require("steem"),
+  hive = require("@hiveio/hive-js"),
   config = require("./config.json"),
   utils = require("./utils.js");
+
+hive.config.set('rebranded_api', 'true');
+hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
 
 const
   Reset = "\x1b[0m",
@@ -22,7 +25,7 @@ utils.switchrpc(counter);
 
 function checkAccount() {
   return new Promise((resolve, reject) => {
-    steem.api.getAccountsAsync([config.witness])
+    hive.api.getAccountsAsync([config.witness])
       .then(function (result) {
         if (result[0]) {
           var publicKeyFromBlockchain = result[0].active.key_auths[0][0];
@@ -277,7 +280,7 @@ async function priceFeed() {
     console.log(Red + "TEST MODE ON, NOTHING IS BROADCAST" + Reset);
 
   if (!config.testmode && Number(adjustedVWAP) > 0) {
-    steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
+    hive.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
       .then(function (data) {
         if (data)
           console.log(Green + utils.getDate(), "Published price feed " + token + "/USD $" + adjustedVWAP + Reset);

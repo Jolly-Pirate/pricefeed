@@ -7,12 +7,12 @@ A price feed application written in NodeJS for witnesses on the Hive or Steem ne
 - Volume Weighted Average Price (VWAP) from several cryptocurrency exchanges.
 - Supported exchanges: Binance, Bittrex, Huobi, Ionomy, Poloniex, Probit, Upbit.
 
-# Pre-install (e.g. Ubuntu 16.04)
+# Pre-install (e.g. Ubuntu 18.04)
 Requires NodeJS >7.6 (for the async functions).
 ```
 sudo apt update
 sudo apt install -y curl software-properties-common gnupg build-essential libssl-dev
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install -y nodejs
 sudo npm i npm@latest -g
 ```

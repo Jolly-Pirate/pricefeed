@@ -1,7 +1,10 @@
 const
-  request = require("request"),
-  steem = require("steem"),
-  config = require("./config.json");
+  hive = require("@hiveio/hive-js"),
+  config = require("./config.json"),
+  request = require("request");
+
+hive.config.set('rebranded_api', 'true');
+hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
 
 const
   Reset = "\x1b[0m",
@@ -13,7 +16,7 @@ const
 
 var getAccountInfo = function (account) {
   return new Promise((resolve, reject) => {
-    steem.api.getAccounts([account], function (err, response) {
+    hive.api.getAccounts([account], function (err, response) {
       if (err) {
         console.log(err);
         reject(err);
@@ -26,7 +29,7 @@ var getAccountInfo = function (account) {
 function checkPrivateKey(privateKeyFromConfig, publicKeyFromBlockchain) {
   // Verify the private key in the config vs the public key on the blockchain
   try {
-    if (steem.auth.wifIsValid(privateKeyFromConfig, publicKeyFromBlockchain)) {
+    if (hive.auth.wifIsValid(privateKeyFromConfig, publicKeyFromBlockchain)) {
       return true;
     } else {
       return false;
@@ -61,7 +64,7 @@ function switchrpc(counter) {
   if (rpc && counter !== maxrpc) {
     wait(2000);
 
-    steem.api.setOptions({url: rpc[counter], useAppbaseApi: true});
+    hive.api.setOptions({url: rpc[counter], useAppbaseApi: true});
     console.log(getDate(), "Switching to RPC", rpc[counter]);
 
     //process.stderr.write("\x07");// "\007" beep

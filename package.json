@@ -1,7 +1,7 @@
 {
   "name": "pricefeed",
-  "version": "1.0.0",
-  "description": "Steem Price Feed in JS",
+  "version": "3.0",
+  "description": "Hive/Steem Price Feed in JS",
   "author": "Jolly-Pirate",
   "license": "GPL-3.0",
   "main": "app.js",
@@ -14,8 +14,8 @@
     "private": true
   },
   "dependencies": {
-    "request": "*",
-    "steem": "*"
+    "@hiveio/hive-js": "^0.8.4",
+    "request": "*"
   },
   "devDependencies": {
     "eslint": "^6.8.0"

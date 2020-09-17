@@ -74,11 +74,11 @@ If you want to terminate the script press `CTRL-c`, then type `exit` to close th
 The configuration is located in the file `app/config.json`.
 
 - witness: witness account
-- privateActiveKey : private active key of the witness account
-- interval : delay between each feed publishing.
-- peg : set to true only if you want to adjust your price feed bias.
-- peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
-- testmode : when set to true, the script won't broadcast the price feed to the blockchain, good for testing or checking the price on the different exchanges
+- privateActiveKey: private active key of the witness account
+- interval: delay between each feed publishing.
+- peg: set to true only if you want to adjust your price feed bias.
+- peg_multi: if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
+- testmode: when set to true, the script won't broadcast the price feed to the blockchain, good for testing or checking the price on the different exchanges
 - hiverpc: array of Hive RPC nodes
 
 The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the exchange prices/volumes and edit their setting accordingly, then restart the price feed.

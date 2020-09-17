@@ -79,7 +79,6 @@ The configuration is located in the file `app/config.json`.
 - peg : set to true only if you want to adjust your price feed bias.
 - peg_multi : if the peg is enabled, then this will change the "quote" to `1 / peg_multi`, e.g. a peg_multi of 2 it will show a 100% bias on the feed.
 - testmode : when set to true, the script won't broadcast the price feed to the blockchain, good for testing or checking the price on the different exchanges
-- hivechain : select which blockchain to broadcast to, by setting only one of those options to `true`
 - hiverpc: array of Hive RPC nodes
 
 The different exchanges can be enabled/disabled with `true` or `false`. Always keep an eye on the exchange prices/volumes and edit their setting accordingly, then restart the price feed.

@@ -1,6 +1,6 @@
 {
   "name": "pricefeed",
-  "version": "1.24.0",
+  "version": "3.0.0",
   "description": "Hive Price Feed in JS",
   "author": "Jolly-Pirate",
   "license": "GPL-3.0",
@@ -14,7 +14,7 @@
     "private": true
   },
   "dependencies": {
-    "@hiveio/hive-js": "^0.8.4",
+    "@hiveio/hive-js": "*",
     "request": "*"
   },
   "devDependencies": {

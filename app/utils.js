@@ -59,8 +59,6 @@ function switchrpc(counter) {
   var maxrpc = rpc.length;
 
   if (rpc && counter !== maxrpc) {
-    wait(2000);
-
     hive.api.setOptions({url: rpc[counter], useAppbaseApi: true});
     console.log(getDate(), "Switching to RPC", rpc[counter]);
 

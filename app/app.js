@@ -41,10 +41,11 @@ function checkAccount() {
       .catch(function (err) {
         console.log(utils.getDate(), Red, "Error in getAccountsAsync()", err, Reset);
         if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) {
-          utils.wait(2000);
+          utils.wait(5000);
           counter = 0;
           checkAccount();
         } else {
+          utils.wait(10000);
           utils.switchrpc(counter);
           counter++;
           checkAccount();

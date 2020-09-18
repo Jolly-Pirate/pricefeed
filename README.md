@@ -5,7 +5,7 @@ A price feed application written in NodeJS for witnesses on the Hive network.
 - Application resilience with NodeJS restart on crash/exit.
 - Automatic RPC switching.
 - Volume Weighted Average Price (VWAP) from several cryptocurrency exchanges.
-- Supported exchanges: Binance, Bittrex, Huobi, Ionomy, Poloniex, Probit, Upbit.
+- Supported exchanges: Binance, Bittrex, Huobi, Ionomy, Probit, Upbit.
 
 # Pre-install (e.g. Ubuntu 18.04)
 Requires NodeJS >7.6 (for the async functions).

@@ -1,7 +1,12 @@
+console.log('NodeJS', process.version);
+
 const
-  steem = require("steem"),
+  hive = require("@hiveio/hive-js"),
   config = require("./config.json"),
   utils = require("./utils.js");
+
+hive.config.set('rebranded_api', 'true');
+hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
 
 const
   Reset = "\x1b[0m",
@@ -11,18 +16,13 @@ const
   Yellow = "\x1b[33m",
   Underscore = "\x1b[4m";
 
-if (config.steemchain && config.hivechain) {
-  console.log("Enable only one blockchain in the app/config.json file, hivechain or steemchain, then restart");
-  console.log("Exiting");
-  process.exit();
-}
 
 var counter = 0;
 utils.switchrpc(counter);
 
 function checkAccount() {
   return new Promise((resolve, reject) => {
-    steem.api.getAccountsAsync([config.witness])
+    hive.api.getAccountsAsync([config.witness])
       .then(function (result) {
         if (result[0]) {
           var publicKeyFromBlockchain = result[0].active.key_auths[0][0];
@@ -41,10 +41,11 @@ function checkAccount() {
       .catch(function (err) {
         console.log(utils.getDate(), Red, "Error in getAccountsAsync()", err, Reset);
         if (JSON.stringify(err, null, 1).includes("RPCError: Unable to acquire database lock")) {
-          utils.wait(2000);
+          utils.wait(5000);
           counter = 0;
           checkAccount();
         } else {
+          utils.wait(10000);
           utils.switchrpc(counter);
           counter++;
           checkAccount();
@@ -76,88 +77,48 @@ async function priceFeed() {
     probitUsdtToken, probitPrice, probitVolume,
     binanceTokenBtc, binancePrice, binanceVolume,
     huobiTokenUsdt, huobiPrice, huobiVolume,
-    poloniexBtcToken, poloniexPrice, poloniexVolume,
     upbitBtcToken, upbitPrice, upbitVolume;
 
-  // select blockchain from config
-  if (config.hivechain) {
-    token = "HIVE";
-    if (config.bittrex) {
-      bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
-      bittrexBtcToken = await utils.getPrice("bittrex", "BTC-HIVE");
-      bittrexPrice = bittrexUsdtBtc.price * bittrexBtcToken.price;
-      bittrexVolume = bittrexBtcToken.volume;
-    }
-    if (config.ionomy) {
-      // Ionomy doesn't have a USDT/BTC pair, so using the average from exchanges
-      binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
-      bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
-      poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
-      upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
-      averageUsdtBtc = (binanceBtcUsdt.price + bittrexUsdtBtc.price + poloniexUsdtBtc.price + upbitUsdtBtc.price) / 4;
-      ionomyBtcToken = await utils.getPrice("ionomy", "btc-hive");
-      ionomyPrice = averageUsdtBtc * ionomyBtcToken.price;
-      ionomyVolume = ionomyBtcToken.volume;
-    }
-    if (config.probit) {
-      probitUsdtToken = await utils.getPrice("probit", "HIVE-USDT");
-      probitPrice = probitUsdtToken.price;
-      probitVolume = probitUsdtToken.volume;
-    }
-    if (config.huobi) {
-      huobiTokenUsdt = await utils.getPrice("huobi", "hiveusdt");
-      huobiPrice = huobiTokenUsdt.price;
-      huobiVolume = huobiTokenUsdt.volume;
-    }
-  }
+  token = "HIVE";
 
-  if (config.steemchain) {
-    token = "STEEM";
-    if (config.binance) {
-      binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
-      binanceTokenBtc = await utils.getPrice("binance", "STEEMBTC");
-      binancePrice = binanceTokenBtc.price * binanceBtcUsdt.price;
-      binanceVolume = binanceTokenBtc.volume;
-    }
-    if (config.bittrex) {
-      bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
-      bittrexBtcToken = await utils.getPrice("bittrex", "BTC-STEEM");
-      bittrexPrice = bittrexUsdtBtc.price * bittrexBtcToken.price;
-      bittrexVolume = bittrexBtcToken.volume;
-    }
-    if (config.huobi) {
-      huobiTokenUsdt = await utils.getPrice("huobi", "hiveusdt");
-      huobiPrice = huobiTokenUsdt.price;
-      huobiVolume = huobiTokenUsdt.volume;
-    }
-    if (config.ionomy) {
-      // Ionomy doesn't have a USDT/BTC pair, so using the average from exchanges
-      binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
-      bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
-      poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
-      upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
-      averageUsdtBtc = (binanceBtcUsdt.price + bittrexUsdtBtc.price + poloniexUsdtBtc.price + upbitUsdtBtc.price) / 4;
-      ionomyBtcToken = await utils.getPrice("ionomy", "btc-steem");
-      ionomyPrice = averageUsdtBtc * ionomyBtcToken.price;
-      ionomyVolume = ionomyBtcToken.volume;
-    }
-    if (config.poloniex) {
-      poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
-      poloniexBtcToken = await utils.getPrice("poloniex", "BTC_STEEM");
-      poloniexPrice = poloniexUsdtBtc.price * poloniexBtcToken.price;
-      poloniexVolume = poloniexBtcToken.volume;
-    }
-    if (config.probit) {
-      probitUsdtToken = await utils.getPrice("probit", "STEEM-USDT");
-      probitPrice = probitUsdtToken.price;
-      probitVolume = probitUsdtToken.volume;
-    }
-    if (config.upbit) {
-      upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
-      upbitBtcToken = await utils.getPrice("upbit", "BTC-STEEM");
-      upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
-      upbitVolume = upbitBtcToken.volume;
-    }
+  if (config.binance) {
+    binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
+    binanceTokenBtc = await utils.getPrice("binance", "HIVEBTC");
+    binancePrice = binanceTokenBtc.price * binanceBtcUsdt.price;
+    binanceVolume = binanceTokenBtc.volume;
+  }
+  if (config.bittrex) {
+    bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
+    bittrexBtcToken = await utils.getPrice("bittrex", "BTC-HIVE");
+    bittrexPrice = bittrexUsdtBtc.price * bittrexBtcToken.price;
+    bittrexVolume = bittrexBtcToken.volume;
+  }
+  if (config.huobi) {
+    huobiTokenUsdt = await utils.getPrice("huobi", "hiveusdt");
+    huobiPrice = huobiTokenUsdt.price;
+    huobiVolume = huobiTokenUsdt.volume;
+  }
+  if (config.ionomy) {
+    // Ionomy doesn't have a USDT/BTC pair, so using the average from exchanges
+    binanceBtcUsdt = await utils.getPrice("binance", "BTCUSDT");
+    bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
+    poloniexUsdtBtc = await utils.getPrice("poloniex", "USDT_BTC");
+    upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
+    averageUsdtBtc = (binanceBtcUsdt.price + bittrexUsdtBtc.price + poloniexUsdtBtc.price + upbitUsdtBtc.price) / 4;
+    ionomyBtcToken = await utils.getPrice("ionomy", "btc-hive");
+    ionomyPrice = averageUsdtBtc * ionomyBtcToken.price;
+    ionomyVolume = ionomyBtcToken.volume;
+  }
+  if (config.probit) {
+    probitUsdtToken = await utils.getPrice("probit", "HIVE-USDT");
+    probitPrice = probitUsdtToken.price;
+    probitVolume = probitUsdtToken.volume;
+  }
+  if (config.upbit) {
+    upbitUsdtBtc = await utils.getPrice("upbit", "USDT-BTC");
+    upbitBtcToken = await utils.getPrice("upbit", "BTC-HIVE");
+    upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
+    upbitVolume = upbitBtcToken.volume;
   }
 
   var priceArray = [];
@@ -179,10 +140,6 @@ async function priceFeed() {
   if (ionomyPrice > 0) {
     console.log(("Ionomy").padEnd(8), "$" + ionomyPrice.toFixed(3), Math.floor(ionomyVolume).toLocaleString().padStart(10));
     priceArray.push([ionomyPrice, ionomyVolume]);
-  }
-  if (poloniexPrice > 0) {
-    console.log(("Poloniex").padEnd(8), "$" + poloniexPrice.toFixed(3), Math.floor(poloniexVolume).toLocaleString().padStart(10));
-    priceArray.push([poloniexPrice, poloniexVolume]);
   }
   if (probitPrice > 0) {
     console.log(("Probit").padEnd(8), "$" + probitPrice.toFixed(3), Math.floor(probitVolume).toLocaleString().padStart(10));
@@ -268,7 +225,7 @@ async function priceFeed() {
     console.log("Price after the peg bias  : ", (adjustedVWAP / quote).toFixed(3));
   }
 
-  var exchangeRate = {base: base, quote: quote + " STEEM"};
+  var exchangeRate = {base: base, quote: quote + " HIVE"};
 
   if (Number(adjustedVWAP) === 0)
     console.log(Red + "PROBLEM WITH VWAP" + Reset);
@@ -277,7 +234,7 @@ async function priceFeed() {
     console.log(Red + "TEST MODE ON, NOTHING IS BROADCAST" + Reset);
 
   if (!config.testmode && Number(adjustedVWAP) > 0) {
-    steem.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
+    hive.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)
       .then(function (data) {
         if (data)
           console.log(Green + utils.getDate(), "Published price feed " + token + "/USD $" + adjustedVWAP + Reset);

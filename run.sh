@@ -22,15 +22,6 @@ if [[ ! -f app/config.json ]]; then
   exit 1
 fi
 
-
-HIVECHAIN=`cat app/config.json | jq '.hivechain'`
-STEEMCHAIN=`cat app/config.json | jq '.steemchain'`
-
-if [[ $HIVECHAIN == $STEEMCHAIN ]]; then
-  echo -e "\e[1m\e[34m Enable only one blockchain in the app/config.json file, hivechain or steemchain, then restart \e[0m";
-  exit 1
-fi
-
 build() {
   boldtext "Building docker container"
   time docker build -t pricefeed .

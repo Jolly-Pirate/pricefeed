@@ -3,9 +3,6 @@ const
   config = require("./config.json"),
   request = require("request");
 
-hive.config.set('rebranded_api', 'true');
-hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
-
 const
   Reset = "\x1b[0m",
   Blue = "\x1b[34m",

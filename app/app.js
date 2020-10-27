@@ -5,8 +5,9 @@ const
   config = require("./config.json"),
   utils = require("./utils.js");
 
-hive.config.set('rebranded_api', 'true');
-hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
+// Not needed anymore with 0.8.9+
+//hive.config.set('rebranded_api', 'true');
+//hive.broadcast.updateOperations(); // Necessary to update the already loaded operations
 
 const
   Reset = "\x1b[0m",

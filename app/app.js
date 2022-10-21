@@ -88,8 +88,8 @@ async function priceFeed() {
     binanceVolume = binanceTokenBtc.volume;
   }
   if (config.bittrex) {
-    bittrexUsdtBtc = await utils.getPrice("bittrex", "USDT-BTC");
-    bittrexBtcToken = await utils.getPrice("bittrex", "BTC-HIVE");
+    bittrexUsdtBtc = await utils.getPrice("bittrex", "BTC-USDT");
+    bittrexBtcToken = await utils.getPrice("bittrex", "HIVE-BTC");
     bittrexPrice = bittrexUsdtBtc.price * bittrexBtcToken.price;
     bittrexVolume = bittrexBtcToken.volume;
   }

@@ -5,11 +5,7 @@ const
 
 const
   Reset = "\x1b[0m",
-  Blue = "\x1b[34m",
-  Green = "\x1b[32m",
-  Red = "\x1b[31m",
-  Yellow = "\x1b[33m",
-  Underscore = "\x1b[4m";
+  Red = "\x1b[31m";
 
 var getAccountInfo = function (account) {
   return new Promise((resolve, reject) => {
@@ -56,7 +52,7 @@ function switchrpc(counter) {
   var maxrpc = rpc.length;
 
   if (rpc && counter !== maxrpc) {
-    hive.api.setOptions({url: rpc[counter], useAppbaseApi: true});
+    hive.api.setOptions({ url: rpc[counter], useAppbaseApi: true });
     console.log(getDate(), "Switching to RPC", rpc[counter]);
 
     //process.stderr.write("\x07");// "\007" beep
@@ -75,8 +71,8 @@ function getPrice(exchange, pair) {
         url = "https://api.binance.com/api/v3/ticker/24hr?symbol=" + pair;
         break;
       case "bittrex":
-        // https://bittrex.github.io/api/v1-1
-        url = "https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair;
+        // https://bittrex.github.io/api/v3
+        url = `https://api.bittrex.com/v3/markets/${pair}/summary`;
         break;
       case "huobi":
         // https://huobiapi.github.io/docs/dm/v1/en/
@@ -110,28 +106,28 @@ function getPrice(exchange, pair) {
       if (body && body.includes(pair)) {
         var json = JSON.parse(body); // convert body to json
         if (exchange === "binance")
-          resolve({price: parseFloat(json.lastPrice), volume: parseFloat(json.volume)});
+          resolve({ price: parseFloat(json.lastPrice), volume: parseFloat(json.volume) });
         if (exchange === "bittrex")
-          resolve({price: parseFloat(json.result[0].Last), volume: parseFloat(json.result[0].Volume)});
+          resolve({ price: parseFloat(json.high), volume: parseFloat(json.volume) });
         if (exchange === "huobi")
-          resolve({price: parseFloat(json.tick.close), volume: parseFloat(json.tick.vol)});
+          resolve({ price: parseFloat(json.tick.close), volume: parseFloat(json.tick.vol) });
         if (exchange === "ionomy")
-          resolve({price: parseFloat(json.data.price), volume: parseFloat(json.data.volume)});
+          resolve({ price: parseFloat(json.data.price), volume: parseFloat(json.data.volume) });
         if (exchange === "kraken")
-          resolve({price: parseFloat(json.result.USDTZUSD.c[0]), volume: parseFloat(json.result.USDTZUSD.v[0])});
+          resolve({ price: parseFloat(json.result.USDTZUSD.c[0]), volume: parseFloat(json.result.USDTZUSD.v[0]) });
         if (exchange === "poloniex")
-          resolve({price: parseFloat(json[pair].last), volume: parseFloat(json[pair].quoteVolume)}); // using variable in json selector
+          resolve({ price: parseFloat(json[pair].last), volume: parseFloat(json[pair].quoteVolume) }); // using variable in json selector
         if (exchange === "probit")
-          resolve({price: parseFloat(json.data[0].last), volume: parseFloat(json.data[0].base_volume)});
+          resolve({ price: parseFloat(json.data[0].last), volume: parseFloat(json.data[0].base_volume) });
         if (exchange === "upbit")
-          resolve({price: json[0].trade_price, volume: json[0].acc_trade_volume_24h});
+          resolve({ price: json[0].trade_price, volume: json[0].acc_trade_volume_24h });
       } else {
         console.log(Red, "Error fetching", pair, "from", exchange, Reset);
-        resolve({price: 0, volume: 0});
+        resolve({ price: 0, volume: 0 });
       }
       if (error) {
         console.log(error);
-        resolve({price: 0, volume: 0}); // set the price/volume to 0 and exclude it in the price calculation
+        resolve({ price: 0, volume: 0 }); // set the price/volume to 0 and exclude it in the price calculation
       }
     });
   });

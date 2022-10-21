@@ -17,7 +17,6 @@ const
   Yellow = "\x1b[33m",
   Underscore = "\x1b[4m";
 
-
 var counter = 0;
 utils.switchrpc(counter);
 
@@ -67,8 +66,8 @@ setInterval(function () {
 }, config.interval * 60 * 1000);
 
 async function priceFeed() {
-//  var cmcSteem = await getPrice("https://api.coinmarketcap.com/v1/ticker/steem/?convert=USD");
-//  var cmcPrice = parseFloat(cmcSteem[0].price_usd).toFixed(3);
+  //  var cmcSteem = await getPrice("https://api.coinmarketcap.com/v1/ticker/steem/?convert=USD");
+  //  var cmcPrice = parseFloat(cmcSteem[0].price_usd).toFixed(3);
 
   var
     token,
@@ -156,11 +155,11 @@ async function priceFeed() {
 
   // USDT correction
   var usdtCorrectionArray = [];
-  var bittrexUsdUsdt = await utils.getPrice("bittrex", "USD-USDT");
+  var bittrexUsdtUsd = await utils.getPrice("bittrex", "USDT-USD");
   var krakenUsdtUsd = await utils.getPrice("kraken", "USDTZUSD");
 
-  if (bittrexUsdUsdt.price > 0)
-    usdtCorrectionArray.push([bittrexUsdUsdt.price, bittrexUsdUsdt.volume]);
+  if (bittrexUsdtUsd.price > 0)
+    usdtCorrectionArray.push([bittrexUsdtUsd.price, bittrexUsdtUsd.volume]);
   if (krakenUsdtUsd.price > 0)
     usdtCorrectionArray.push([krakenUsdtUsd.price, krakenUsdtUsd.volume]);
 
@@ -226,7 +225,7 @@ async function priceFeed() {
     console.log("Price after the peg bias  : ", (adjustedVWAP / quote).toFixed(3));
   }
 
-  var exchangeRate = {base: base, quote: quote + " HIVE"};
+  var exchangeRate = { base: base, quote: quote + " HIVE" };
 
   if (Number(adjustedVWAP) === 0)
     console.log(Red + "PROBLEM WITH VWAP" + Reset);

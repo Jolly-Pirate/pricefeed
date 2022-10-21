@@ -1,25 +1,20 @@
 {
   "witness": "YOURWITNESSNAME",
   "privateActiveKey": "YOURACTIVEKEY",
-  "interval": 360,
+  "interval": 720,
   "peg": false,
   "peg_multi": 1,
-
   "testmode": false,
-
   "binance": true,
   "bittrex": true,
   "huobi": true,
   "ionomy": true,
   "probit": true,
   "upbit": true,
-
   "hiverpc": [
     "https://anyx.io",
     "https://api.deathwing.me",
-    "https://api.followbtcnews.com",
     "https://api.hive.blog",
-    "https://api.hivekings.com",
     "https://api.openhive.network",
     "https://api.pharesim.me",
     "https://hive.3speak.online",

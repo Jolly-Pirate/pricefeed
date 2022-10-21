@@ -1,14 +1,14 @@
 {
   "name": "pricefeed",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Hive Price Feed in JS",
   "author": "Jolly-Pirate",
   "license": "GPL-3.0",
   "main": "app.js",
   "scripts": {
-    "preinstall": "sudo npm i -g forever",
+    "preinstall": "npm install -g pm2",
     "pretest": "eslint --ignore-path .gitignore .",
-    "start": "forever --minUptime 1000 --spinSleepTime 10000 -m 10 app/app.js"
+    "start": "pm2-runtime start app/app.js --env production"
   },
   "repository": {
     "private": true

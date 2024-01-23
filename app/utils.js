@@ -105,8 +105,8 @@ function getPrice(exchange, pair) {
         url = "https://api.mexc.com/api/v3/ticker/24hr?symbol=" + pair;
         break;
       case "gateio":
+        // https://www.gate.io/docs/developers/apiv4/#get-details-of-a-specifc-currency-pair
         url = "https://api.gateio.ws/api/v4/spot/tickers?currency_pair=" + pair;
-        console.log('URL', url);
         break;
       default:
     }

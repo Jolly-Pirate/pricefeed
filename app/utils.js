@@ -126,7 +126,7 @@ function getPrice(exchange, pair) {
         if (exchange === "upbit")
           resolve({ price: json[0].trade_price, volume: json[0].acc_trade_volume_24h });
         if (exchange === "mexc")
-          resolve({ price: json.lastPrice, volume: json.volume });
+          resolve({ price: parseFloat(json.lastPrice), volume: parseFloat(json.volume) });
       } else {
         console.log(Red, "Error fetching", pair, "from", exchange, Reset);
         resolve({ price: 0, volume: 0 });

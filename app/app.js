@@ -77,7 +77,8 @@ async function priceFeed() {
     probitUsdtToken, probitPrice, probitVolume,
     binanceTokenBtc, binancePrice, binanceVolume,
     huobiTokenUsdt, huobiPrice, huobiVolume,
-    upbitBtcToken, upbitPrice, upbitVolume;
+    upbitBtcToken, upbitPrice, upbitVolume,
+    mexcUsdtBtc, mexcBtcToken, mexcPrice, mexcVolume;
 
   token = "HIVE";
 
@@ -120,6 +121,12 @@ async function priceFeed() {
     upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
     upbitVolume = upbitBtcToken.volume;
   }
+  if (config.mexc) {
+    mexcUsdtBtc = await utils.getPrice("mexc", "BTCUSDT");
+    mexcBtcToken = await utils.getPrice("mexc", "HIVEBTC");
+    mexcPrice = mexcUsdtBtc.price * mexcBtcToken.price;
+    mexcVolume = mexcBtcToken.volume;
+  }
 
   var priceArray = [];
 
@@ -148,6 +155,10 @@ async function priceFeed() {
   if (upbitPrice > 0) {
     console.log(("UpBit").padEnd(8), "$" + upbitPrice.toFixed(3), Math.floor(upbitVolume).toLocaleString().padStart(10));
     priceArray.push([upbitPrice, upbitVolume]);
+  }
+  if (mexcPrice > 0) {
+    console.log(("MEXC").padEnd(8), "$" + mexcPrice.toFixed(3), Math.floor(mexcVolume).toLocaleString().padStart(10));
+    priceArray.push([mexcPrice, mexcVolume]);
   }
 
   // Volume Weighted Average Price (VWAP)

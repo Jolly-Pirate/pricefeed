@@ -100,6 +100,10 @@ function getPrice(exchange, pair) {
         // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-HIVE
         url = "https://api.upbit.com/v1/ticker?markets=" + pair;
         break;
+      case "mexc":
+        // https://mexcdevelop.github.io/apidocs/spot_v3_en/#24hr-ticker-price-change-statistics
+        url = "https://api.mexc.com/api/v3/ticker/24hr?symbol=" + pair;
+        break;
       default:
     }
     request(url, function (error, response, body) {
@@ -121,6 +125,8 @@ function getPrice(exchange, pair) {
           resolve({ price: parseFloat(json.data[0].last), volume: parseFloat(json.data[0].base_volume) });
         if (exchange === "upbit")
           resolve({ price: json[0].trade_price, volume: json[0].acc_trade_volume_24h });
+        if (exchange === "mexc")
+          resolve({ price: json.lastPrice, volume: json.volume });
       } else {
         console.log(Red, "Error fetching", pair, "from", exchange, Reset);
         resolve({ price: 0, volume: 0 });

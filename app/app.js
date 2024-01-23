@@ -79,7 +79,7 @@ async function priceFeed() {
     huobiTokenUsdt, huobiPrice, huobiVolume,
     upbitBtcToken, upbitPrice, upbitVolume,
     mexcUsdtBtc, mexcBtcToken, mexcPrice, mexcVolume,
-    gateioUsdtBtc, gateioBtcToken, gateioPrice, gateioVolume;
+    gateioBtcToken, gateioPrice, gateioVolume;
 
   token = "HIVE";
 
@@ -176,11 +176,11 @@ async function priceFeed() {
 
   // USDT correction
   var usdtCorrectionArray = [];
-  var bittrexUsdtUsd = await utils.getPrice("bittrex", "USDT-USD");
+  var gateioUsdtUsd = await utils.getPrice("gateio", "USDT_USD");
   var krakenUsdtUsd = await utils.getPrice("kraken", "USDTZUSD");
 
-  if (bittrexUsdtUsd.price > 0)
-    usdtCorrectionArray.push([bittrexUsdtUsd.price, bittrexUsdtUsd.volume]);
+  if (gateioUsdtUsd.price > 0)
+    usdtCorrectionArray.push([gateioUsdtUsd.price, gateioUsdtUsd.volume]);
   if (krakenUsdtUsd.price > 0)
     usdtCorrectionArray.push([krakenUsdtUsd.price, krakenUsdtUsd.volume]);
 

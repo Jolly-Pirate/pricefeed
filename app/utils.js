@@ -104,6 +104,10 @@ function getPrice(exchange, pair) {
         // https://mexcdevelop.github.io/apidocs/spot_v3_en/#24hr-ticker-price-change-statistics
         url = "https://api.mexc.com/api/v3/ticker/24hr?symbol=" + pair;
         break;
+      case "gateio":
+        url = "https://api.gateio.ws/api/v4/spot/tickers?currency_pair=" + pair;
+        console.log('URL', url);
+        break;
       default:
     }
     request(url, function (error, response, body) {
@@ -127,6 +131,8 @@ function getPrice(exchange, pair) {
           resolve({ price: json[0].trade_price, volume: json[0].acc_trade_volume_24h });
         if (exchange === "mexc")
           resolve({ price: parseFloat(json.lastPrice), volume: parseFloat(json.volume) });
+        if (exchange === "gateio")
+          resolve({ price: parseFloat(json[0].last), volume: parseFloat(json[0].base_volume) });
       } else {
         console.log(Red, "Error fetching", pair, "from", exchange, Reset);
         resolve({ price: 0, volume: 0 });

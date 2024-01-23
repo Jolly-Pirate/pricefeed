@@ -78,7 +78,8 @@ async function priceFeed() {
     binanceTokenBtc, binancePrice, binanceVolume,
     huobiTokenUsdt, huobiPrice, huobiVolume,
     upbitBtcToken, upbitPrice, upbitVolume,
-    mexcUsdtBtc, mexcBtcToken, mexcPrice, mexcVolume;
+    mexcUsdtBtc, mexcBtcToken, mexcPrice, mexcVolume,
+    gateioUsdtBtc, gateioBtcToken, gateioPrice, gateioVolume;
 
   token = "HIVE";
 
@@ -127,6 +128,11 @@ async function priceFeed() {
     mexcPrice = mexcUsdtBtc.price * mexcBtcToken.price;
     mexcVolume = mexcBtcToken.volume;
   }
+  if (config.gateio) {
+    gateioBtcToken = await utils.getPrice("gateio", "HIVE_USDT");
+    gateioPrice = gateioBtcToken.price;
+    gateioVolume = gateioBtcToken.volume;
+  }
 
   var priceArray = [];
 
@@ -159,6 +165,10 @@ async function priceFeed() {
   if (mexcPrice > 0) {
     console.log(("MEXC").padEnd(8), "$" + mexcPrice.toFixed(3), Math.floor(mexcVolume).toLocaleString().padStart(10));
     priceArray.push([mexcPrice, mexcVolume]);
+  }
+  if (gateioPrice > 0) {
+    console.log(("GateIO").padEnd(8), "$" + gateioPrice.toFixed(3), Math.floor(gateioVolume).toLocaleString().padStart(10));
+    priceArray.push([gateioPrice, gateioVolume]);
   }
 
   // Volume Weighted Average Price (VWAP)

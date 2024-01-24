@@ -54,12 +54,6 @@ function checkAccount() {
   });
 }
 
-(async function () {
-  var status = await checkAccount();
-  if (status)
-    console.log(utils.getDate(), "Publishing price feed now, then every", config.interval, "minutes.");
-})();
-
 priceFeed();
 setInterval(function () {
   priceFeed();
@@ -176,11 +170,11 @@ async function priceFeed() {
 
   // USDT correction
   var usdtCorrectionArray = [];
-  var gateioUsdtUsd = await utils.getPrice("gateio", "USDT_USD");
+  var bitfinexUsdtUsd = await utils.getPrice("bitfinex", "USTUSD");
   var krakenUsdtUsd = await utils.getPrice("kraken", "USDTZUSD");
 
-  if (gateioUsdtUsd.price > 0)
-    usdtCorrectionArray.push([gateioUsdtUsd.price, gateioUsdtUsd.volume]);
+  if (bitfinexUsdtUsd.price > 0)
+    usdtCorrectionArray.push([bitfinexUsdtUsd.price, bitfinexUsdtUsd.volume]);
   if (krakenUsdtUsd.price > 0)
     usdtCorrectionArray.push([krakenUsdtUsd.price, krakenUsdtUsd.volume]);
 
@@ -253,6 +247,12 @@ async function priceFeed() {
 
   if (config.testmode)
     console.log(Red + "TEST MODE ON, NOTHING IS BROADCAST" + Reset);
+
+  (async function () {
+    var status = await checkAccount();
+    if (status)
+      console.log(utils.getDate(), "Publishing price feed now, then every", config.interval, "minutes.");
+  })();
 
   if (!config.testmode && Number(adjustedVWAP) > 0) {
     hive.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)

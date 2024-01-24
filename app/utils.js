@@ -100,10 +100,25 @@ function getPrice(exchange, pair) {
         // https://upbit.com/exchange?code=CRIX.UPBIT.BTC-HIVE
         url = "https://api.upbit.com/v1/ticker?markets=" + pair;
         break;
+      case "mexc":
+        // https://mexcdevelop.github.io/apidocs/spot_v3_en/#24hr-ticker-price-change-statistics
+        url = "https://api.mexc.com/api/v3/ticker/24hr?symbol=" + pair;
+        break;
+      case "gateio":
+        // https://www.gate.io/docs/developers/apiv4/#get-details-of-a-specifc-currency-pair
+        url = "https://api.gateio.ws/api/v4/spot/tickers?currency_pair=" + pair;
+        break;
+      case "bitfinex":
+        // https://docs.bitfinex.com/reference/rest-public-ticker
+        url = 'https://api-pub.bitfinex.com/v2/ticker/t' + pair;
+        break;
       default:
     }
     request(url, function (error, response, body) {
-      if (body && body.includes(pair)) {
+      if (
+        body
+        && (body.includes(pair) || exchange === 'bitfinex')
+      ) {
         var json = JSON.parse(body); // convert body to json
         if (exchange === "binance")
           resolve({ price: parseFloat(json.lastPrice), volume: parseFloat(json.volume) });
@@ -121,8 +136,14 @@ function getPrice(exchange, pair) {
           resolve({ price: parseFloat(json.data[0].last), volume: parseFloat(json.data[0].base_volume) });
         if (exchange === "upbit")
           resolve({ price: json[0].trade_price, volume: json[0].acc_trade_volume_24h });
+        if (exchange === "mexc")
+          resolve({ price: parseFloat(json.lastPrice), volume: parseFloat(json.volume) });
+        if (exchange === "gateio")
+          resolve({ price: parseFloat(json[0].last), volume: parseFloat(json[0].base_volume) });
+        if (exchange === "bitfinex")
+          resolve({ price: parseFloat(json[6]), volume: parseFloat(json[7]) });
       } else {
-        console.log(Red, "Error fetching", pair, "from", exchange, Reset);
+        console.log(Red, "Error fetching", pair, "from", exchange, body, Reset);
         resolve({ price: 0, volume: 0 });
       }
       if (error) {

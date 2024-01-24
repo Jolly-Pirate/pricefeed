@@ -54,12 +54,6 @@ function checkAccount() {
   });
 }
 
-(async function () {
-  var status = await checkAccount();
-  if (status)
-    console.log(utils.getDate(), "Publishing price feed now, then every", config.interval, "minutes.");
-})();
-
 priceFeed();
 setInterval(function () {
   priceFeed();
@@ -77,7 +71,9 @@ async function priceFeed() {
     probitUsdtToken, probitPrice, probitVolume,
     binanceTokenBtc, binancePrice, binanceVolume,
     huobiTokenUsdt, huobiPrice, huobiVolume,
-    upbitBtcToken, upbitPrice, upbitVolume;
+    upbitBtcToken, upbitPrice, upbitVolume,
+    mexcUsdtBtc, mexcBtcToken, mexcPrice, mexcVolume,
+    gateioBtcToken, gateioPrice, gateioVolume;
 
   token = "HIVE";
 
@@ -120,6 +116,17 @@ async function priceFeed() {
     upbitPrice = upbitUsdtBtc.price * upbitBtcToken.price;
     upbitVolume = upbitBtcToken.volume;
   }
+  if (config.mexc) {
+    mexcUsdtBtc = await utils.getPrice("mexc", "BTCUSDT");
+    mexcBtcToken = await utils.getPrice("mexc", "HIVEBTC");
+    mexcPrice = mexcUsdtBtc.price * mexcBtcToken.price;
+    mexcVolume = mexcBtcToken.volume;
+  }
+  if (config.gateio) {
+    gateioBtcToken = await utils.getPrice("gateio", "HIVE_USDT");
+    gateioPrice = gateioBtcToken.price;
+    gateioVolume = gateioBtcToken.volume;
+  }
 
   var priceArray = [];
 
@@ -149,17 +156,25 @@ async function priceFeed() {
     console.log(("UpBit").padEnd(8), "$" + upbitPrice.toFixed(3), Math.floor(upbitVolume).toLocaleString().padStart(10));
     priceArray.push([upbitPrice, upbitVolume]);
   }
+  if (mexcPrice > 0) {
+    console.log(("MEXC").padEnd(8), "$" + mexcPrice.toFixed(3), Math.floor(mexcVolume).toLocaleString().padStart(10));
+    priceArray.push([mexcPrice, mexcVolume]);
+  }
+  if (gateioPrice > 0) {
+    console.log(("GateIO").padEnd(8), "$" + gateioPrice.toFixed(3), Math.floor(gateioVolume).toLocaleString().padStart(10));
+    priceArray.push([gateioPrice, gateioVolume]);
+  }
 
   // Volume Weighted Average Price (VWAP)
   // VWAP= ∑(Price * Volume) / ∑Volume
 
   // USDT correction
   var usdtCorrectionArray = [];
-  var bittrexUsdtUsd = await utils.getPrice("bittrex", "USDT-USD");
+  var bitfinexUsdtUsd = await utils.getPrice("bitfinex", "USTUSD");
   var krakenUsdtUsd = await utils.getPrice("kraken", "USDTZUSD");
 
-  if (bittrexUsdtUsd.price > 0)
-    usdtCorrectionArray.push([bittrexUsdtUsd.price, bittrexUsdtUsd.volume]);
+  if (bitfinexUsdtUsd.price > 0)
+    usdtCorrectionArray.push([bitfinexUsdtUsd.price, bitfinexUsdtUsd.volume]);
   if (krakenUsdtUsd.price > 0)
     usdtCorrectionArray.push([krakenUsdtUsd.price, krakenUsdtUsd.volume]);
 
@@ -232,6 +247,12 @@ async function priceFeed() {
 
   if (config.testmode)
     console.log(Red + "TEST MODE ON, NOTHING IS BROADCAST" + Reset);
+
+  (async function () {
+    var status = await checkAccount();
+    if (status)
+      console.log(utils.getDate(), "Publishing price feed now, then every", config.interval, "minutes.");
+  })();
 
   if (!config.testmode && Number(adjustedVWAP) > 0) {
     hive.broadcast.feedPublishAsync(config.privateActiveKey, config.witness, exchangeRate)

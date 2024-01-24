@@ -11,6 +11,8 @@
   "ionomy": true,
   "probit": true,
   "upbit": true,
+  "mexc": true,
+  "gateio": true,
   "hiverpc": [
     "https://anyx.io",
     "https://api.deathwing.me",
